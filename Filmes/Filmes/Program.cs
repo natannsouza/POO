@@ -5,7 +5,7 @@ namespace Filmes
     {
         static void Main(string[] args)
         {
-            Tela tela = new Tela(ConsoleColor.Black, ConsoleColor.Green);
+            Tela tela = new Tela(ConsoleColor.Black, ConsoleColor.DarkGreen);
             tela.ConfigurarTela();
 
             FilmeView view = new FilmeView();

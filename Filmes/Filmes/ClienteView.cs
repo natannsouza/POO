@@ -13,9 +13,9 @@ namespace Filmes
 
         }
 
-        public ClienteModel EntrarDados(string qual)
-        {
-
-        }
+        // public ClienteModel EntrarDados(string qual)
+        // {
+        //
+        // }
     }
 }
