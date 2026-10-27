@@ -11,6 +11,7 @@ namespace Filmes
         private List<FilmeModel> _colecaoFilmes;
         private FilmeView _filmeView;
         private FilmeModel _filmeModel;
+        private int _posicao;
 
 
         public FilmeController()
