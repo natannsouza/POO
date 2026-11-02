@@ -26,12 +26,15 @@ namespace Filmes
             _colIni = 18;
             _linIni = 4;
 
-            _colFin = _colFin + _campos[0].Length + 1 + 30;
-
+            // início + largura do rótulo + 1 + espaço para digitação
+            _colFin = -_colIni + _campos[0].Length + 1 + 30;
+            // início + quantidade de campos + 1 + 2
             _linFin = _linIni + _campos.Count + 1 + 2;
 
             //imagine como, pula um campo dps do campo + 1 para ficar com letra colado
+            // início + largura do rótulo + 1
             _colDados = _colIni + _campos[0].Length + 1;
+            // duas linhas abaixo do início da moldura
             _linDados = _linIni + 2;
         }
 
@@ -54,6 +57,16 @@ namespace Filmes
         // entra dados: ler e preencher o objeto
         public ClienteModel EntrarDados(string qual, ClienteModel cliente)
         {
+            if(qual == "PK")
+            {
+                Console.SetCursorPosition(_colDados, _linDados);
+                cliente.Nome = Console.ReadLine();
+            }
+
+            else if(qual == "DT")
+            {
+
+            }
 
             return cliente;
         }
