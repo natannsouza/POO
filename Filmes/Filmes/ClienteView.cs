@@ -8,14 +8,16 @@ namespace Filmes
 {
     internal class ClienteView
     {
-        public void MostrarFormulario()
-        {
+        // atributos: coordenadas e lista de campos
 
-        }
+        // construtor: preparar campos e calcular posições
 
-        // public ClienteModel EntrarDados(string qual)
-        // {
-        //
-        // }
+        // mostra formulário: desenhar moldura e rótulos
+
+        // entra dados: ler e preencher o objeto
+
+        // mostra dados: exibir os valores do objeto
+
+        // pergunta: perguntar, ler e retornar a resposta
     }
 }

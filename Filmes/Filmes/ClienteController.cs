@@ -9,23 +9,29 @@ namespace Filmes
     internal class ClienteController
     {
         //atributos
-        private List<ClienteModel> _colecaoClientes;
-        private ClienteModel _cliente;
         private ClienteView _clienteView;
-        private int _posicao;
+        private ClienteModel _clienteModel;
+        private List<ClienteModel> _colecaoCliente;
 
+
+        //constutor
         public ClienteController()
         {
             _clienteView = new ClienteView();
-            _cliente = new ClienteModel();
-            _colecaoClientes = new List<ClienteModel>();
-            _colecaoClientes.Add(new ClienteModel(139.513, "Natan de Souza", 34549087));
+            _clienteModel = new ClienteModel();
+            _colecaoCliente = new List<ClienteModel>();
+
+            _colecaoCliente.Add(
+                new ClienteModel(133.133, "Natan de Souza", 34545419));
         }
 
         public void ExecutarCRUD()
         {
-            _clienteView.MostrarFormulario();
-            // _clienteView.EntrarDados("PK");
+            ClienteView view = new ClienteView();
+            ClienteModel cliente = new ClienteModel();
+            string resp;
+
+
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Biblioteca
 {
     internal class AlunoController
     {
-        // atributos
+        // Atributos
         private List<AlunoModel> _colecaoAlunos;
 
         private AlunoModel _aluno;
@@ -18,19 +18,28 @@ namespace Biblioteca
         private int _colIni;
         private int _linFin;
 
-        // construtor
+
+        // Construtor
         public AlunoController()
         {
             this._alunoView = new AlunoView();
             this._aluno = new AlunoModel();
 
             this._colecaoAlunos = new List<AlunoModel>();
-            // adiciona 1 aluno na coleção para testarmos a consulta posteriormente
+
+            // Adicionar um aluno para testar a consulta
             this._colecaoAlunos.Add(
-                new AlunoModel("123", "Zé Colmeia", "zecolmeia@gmail.com", "99967-8976")
+                new AlunoModel(
+                    "123",
+                    "Zé Colmeia",
+                    "zecolmeia@gmail.com",
+                    "99967-8976"
+                )
             );
         }
 
+
+        // Buscar a matrícula e guardar a posição encontrada
         public bool BuscarCodigo(string matricula)
         {
             bool encontrei = false;
@@ -48,73 +57,93 @@ namespace Biblioteca
             return encontrei;
         }
 
+
+        // Executar as operações do cadastro
         public void ExecutarCrud()
         {
             AlunoView view = new AlunoView();
             AlunoModel aluno = new AlunoModel();
             string resp;
-            //mostart tela 
+
+            // Mostrar o formulário
             view.MostrarFormulario();
-            //pergunta o codigo
+
+            // Ler a matrícula
             view.EntrarDados("PK", aluno);
-            //busca pelo codigo
+
+            // Buscar a matrícula na coleção
             bool achei = BuscarCodigo(aluno.Matricula);
-            //se NÃO ACHOU 
+
+            // Se não encontrou, oferecer o cadastro
             if (!achei)
             {
-                //avisa que não achou e pergunta se deseja cadastrar
-                resp = view.Perguntar("Matricula nao encontrada. Deseja cadastrar (S/N) : ");
-                //se SIM
-                if (resp == "s")
+                resp = view.Perguntar(
+                    "Matricula nao encontrada. Deseja cadastrar (S/N) : "
+                );
+
+                if (resp == "S")
                 {
-                    //pergunta os outros dados do aluno
+                    // Ler os demais dados
                     view.EntrarDados("DT", aluno);
 
-                    //pergunta se confirma o cadastro
-                    view.Perguntar("Confirma o cadastro (S/N) : ");
-                    //se SIM
-                    if (resp == "s")
+                    // Guardar a resposta da confirmação
+                    resp = view.Perguntar(
+                        "Confirma o cadastro (S/N) : "
+                    );
+
+                    if (resp == "S")
                     {
-                        //adiciona o novo aluno à coleção
+                        // CREATE: adicionar o aluno à coleção
                         this._colecaoAlunos.Add(aluno);
                     }
                 }
             }
             else
             {
-                //mostra os dados do aluno
-                view.MostrarDados(this._colecaoAlunos[this._posicao]);
-                //pergunta se deseja alterar/excluir/voltar
-                resp = view.Perguntar("Deseja alterar/excluir/voltar (A/E/V) : ");
-                //se ALTERAR
+                // READ: mostrar os dados do aluno encontrado
+                view.MostrarDados(
+                    this._colecaoAlunos[this._posicao]
+                );
+
+                // Perguntar qual operação realizar
+                resp = view.Perguntar(
+                    "Deseja alterar/excluir/voltar (A/E/V) : "
+                );
+
+                // Se escolheu alterar
                 if (resp == "A")
                 {
-                    //pergunta os novos dados
+                    // Ler os novos dados
                     view.EntrarDados("DT", aluno);
+
+                    // Confirmar a alteração
+                    resp = view.Perguntar(
+                        "Confirma a alteracao (S/N) : "
+                    );
+
+                    if (resp == "S")
+                    {
+                        // UPDATE: substituir o aluno da posição encontrada
+                        this._colecaoAlunos[this._posicao] = aluno;
+                    }
                 }
 
-                //pergunta se confirma alteração
-                resp = view.Perguntar("Confirma o cadastro (S/N) : ");
-
-                //se SIM
-                if (resp == "S")
-                {
-                    //atualiza os daods do aluno na coleção
-                    this._colecaoAlunos[this._posicao] = aluno;
-                }
-
-                //se EXCLUIR
+                // Se escolheu excluir
                 else if (resp == "E")
                 {
-                    //pergunta se confirma exclusao
-                    resp = view.Perguntar("Confirma o cadastro (S/N): ");
-                    //se SIM
-                    if (resp == "s")
+                    // Confirmar a exclusão
+                    resp = view.Perguntar(
+                        "Confirma a exclusao (S/N) : "
+                    );
+
+                    if (resp == "S")
                     {
-                        //apaga o aluno da coleção
+                        // DELETE: remover o aluno da posição encontrada
                         this._colecaoAlunos.RemoveAt(this._posicao);
                     }
                 }
+
+                // Se escolheu V, encerrar o método sem alterar a coleção
             }
         }
     }
