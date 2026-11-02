@@ -9,8 +9,19 @@ namespace Filmes
     internal class ClienteView
     {
         // atributos: coordenadas e lista de campos
+        private int _colIni, _linIni, _colFin, _linFin, _colDados, _linDados;
+
+        private List<string> _campos;
 
         // construtor: preparar campos e calcular posições
+        public ClienteView()
+        {
+            _campos = new List<string>();
+
+            _campos.Add("Cpf:      ");
+            _campos.Add("Nome:     ");
+            _campos.Add("Telefone: ");
+        }
 
         // mostra formulário: desenhar moldura e rótulos
 
