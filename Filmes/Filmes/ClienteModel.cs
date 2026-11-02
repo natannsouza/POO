@@ -11,16 +11,16 @@ namespace Filmes
         //atributos
         private string _cpf;
         private string _nome;
-        private int _telefone;
+        private string _telefone;
 
         //propriedades
         public string Cpf { get => _cpf; set => _cpf = value; }
         public string Nome { get => _nome; set => _nome = value; }
-        public int Telefone { get => _telefone; set => _telefone = value; }
+        public string Telefone { get => _telefone; set => _telefone = value; }
 
 
         //contrutor 
-        public ClienteModel(string cpf, string nome, int telefone)
+        public ClienteModel(string cpf, string nome, string telefone)
         {
             Cpf = cpf;
             Nome = nome;
@@ -31,7 +31,7 @@ namespace Filmes
         {
             Cpf = "";
             Nome = "";
-            Telefone = 0;
+            Telefone = "";
         }
     }
 }

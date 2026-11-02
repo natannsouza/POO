@@ -65,6 +65,18 @@ namespace Filmes
 
             else if(qual == "DT")
             {
+                Tela tela = new Tela();
+
+                tela.LimparArea(_colDados, _linDados + 1, _colFin -1, _linFin-2);
+
+                Console.SetCursorPosition(_colDados, _linDados + 1);
+                cliente.Cpf = Console.ReadLine();
+
+                Console.SetCursorPosition(_colDados, _linDados + 2);
+                cliente.Nome = Console.ReadLine();
+
+                Console.SetCursorPosition(_colDados, _linDados + 3);
+                cliente.Telefone = Console.ReadLine();
 
             }
 
@@ -72,7 +84,30 @@ namespace Filmes
         }
 
         // mostra dados: exibir os valores do objeto
+        public void MostrarDados(ClienteModel cliente)
+        {
+            Console.SetCursorPosition(_colDados, _linDados + 1);
+            Console.Write(cliente.Cpf);
+
+            Console.SetCursorPosition(_colDados, _linDados + 2);
+            Console.Write(cliente.Nome);
+
+            Console.SetCursorPosition(_colDados, _linDados + 3);
+            Console.Write(cliente.Telefone);
+        }
 
         // pergunta: perguntar, ler e retornar a resposta
+        public string Perguntar(string pergunta)
+        {
+            string resposta = "";
+
+            Console.SetCursorPosition(_colIni + 1, _linFin - 1);
+
+            Console.Write(pergunta);
+
+            resposta = Console.ReadLine();
+
+            return resposta.ToUpper();
+        }
     }
 }
