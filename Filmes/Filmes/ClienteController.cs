@@ -22,7 +22,7 @@ namespace Filmes
             _colecaoCliente = new List<ClienteModel>();
 
             _colecaoCliente.Add(
-                new ClienteModel("111.111.111-89", "Natan de Souza", 34545419));
+                new ClienteModel("111.111.111-89", "Natan de Souza", "3454-6723"));
         }
 
         public void ExecutarCRUD()
