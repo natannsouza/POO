@@ -27,7 +27,7 @@ namespace Filmes
             _linIni = 4;
 
             // início + largura do rótulo + 1 + espaço para digitação
-            _colFin = -_colIni + _campos[0].Length + 1 + 30;
+            _colFin = _colIni + _campos[0].Length + 1 + 30;
             // início + quantidade de campos + 1 + 2
             _linFin = _linIni + _campos.Count + 1 + 2;
 
@@ -60,7 +60,7 @@ namespace Filmes
             if(qual == "PK")
             {
                 Console.SetCursorPosition(_colDados, _linDados);
-                cliente.Nome = Console.ReadLine();
+                cliente.Cpf = Console.ReadLine();
             }
 
             else if(qual == "DT")
@@ -69,13 +69,11 @@ namespace Filmes
 
                 tela.LimparArea(_colDados, _linDados + 1, _colFin -1, _linFin-2);
 
-                Console.SetCursorPosition(_colDados, _linDados + 1);
-                cliente.Cpf = Console.ReadLine();
 
-                Console.SetCursorPosition(_colDados, _linDados + 2);
+                Console.SetCursorPosition(_colDados, _linDados + 1);
                 cliente.Nome = Console.ReadLine();
 
-                Console.SetCursorPosition(_colDados, _linDados + 3);
+                Console.SetCursorPosition(_colDados, _linDados + 2);
                 cliente.Telefone = Console.ReadLine();
 
             }
