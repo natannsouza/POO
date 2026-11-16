@@ -99,10 +99,11 @@ namespace Filmes
 
         public void Centralizar(string texto, int colIni, int colFin, int linha)
         {
-            int coluna = colIni + ((colFin - colIni - texto.Length) / 2);
+            int coluna = colIni +((colFin - colIni - texto.Length) / 2);
             Console.SetCursorPosition(coluna, linha);
             Console.Write(texto);
         }
+        
 
 
         public string MostrarMenu(List<string> menu, int colIni, int linIni)

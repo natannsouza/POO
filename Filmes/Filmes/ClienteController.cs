@@ -74,8 +74,7 @@ namespace Filmes
                 view.MostrarDados(_colecaoCliente[_posicao]);
 
                 resp = view.Perguntar("Deseja altera/excluir ou voltar? (A/E/V)");
-
-
+                
                 if(resp  == "A")
                 {
                     //update

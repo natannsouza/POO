@@ -46,6 +46,8 @@ namespace Biblioteca
             this.Telefone = telefone;
         }
 
+        
+        //inicial contrutor vazio
         public AlunoModel()
         {
             this.Matricula = "";
