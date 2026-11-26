@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +15,13 @@ namespace Biblioteca
 
             LivroController livroController = new LivroController();
             AlunoController alunoController = new AlunoController();
+            // o controller de empréstimos precisa consultar livros e alunos
+            EmprestimoController emprestimoController =
+                new EmprestimoController(livroController, alunoController);
+
+            // livros e alunos precisam consultar empréstimos antes de excluir
+            livroController.AssociarEmprestimos(emprestimoController);
+            alunoController.AssociarEmprestimos(emprestimoController);
 
             List<string> opcoes = new List<string>();
             opcoes.Add(" 1 - Livros      ");
@@ -23,7 +30,15 @@ namespace Biblioteca
             opcoes.Add(" 4 - Relatórios  ");
             opcoes.Add(" 0 - Sair        ");
 
-            string opcao;
+            // opções do submenu de relatórios
+            List<string> relatorios = new List<string>();
+            relatorios.Add(" 1 - Livros                ");
+            relatorios.Add(" 2 - Alunos                ");
+            relatorios.Add(" 3 - Empréstimos ativos    ");
+            relatorios.Add(" 4 - Empréstimos atrasados ");
+            relatorios.Add(" 0 - Voltar                ");
+
+            string opcao, opcaoRelatorio;
 
             while (true)
             {
@@ -32,7 +47,25 @@ namespace Biblioteca
 
                 if (opcao == "0") break;
                 else if (opcao == "1") livroController.ExecutarCRUD();
-                else if (opcao == "2") alunoController.ExecutarCrud();
+                else if (opcao == "2") alunoController.ExecutarCRUD();
+                else if (opcao == "3") emprestimoController.ExecutarCRUD();
+                else if (opcao == "4")
+                {
+                    // mostra o submenu de relatórios
+                    tela.MontarMoldura(0, 0, 79, 24, "Relatórios");
+                    opcaoRelatorio = tela.MostrarMenu(relatorios, 2, 2);
+
+                    if (opcaoRelatorio == "1") livroController.Relatorio();
+                    else if (opcaoRelatorio == "2") alunoController.Relatorio();
+                    else if (opcaoRelatorio == "3") emprestimoController.RelatorioAtivos();
+                    else if (opcaoRelatorio == "4") emprestimoController.RelatorioAtrasados();
+                    else if (opcaoRelatorio != "0")
+                    {
+                        tela.Centralizar("Opção inválida! Acione uma tecla.",
+                            1, 78, 23);
+                        Console.ReadKey();
+                    }
+                }
                 else
                 {
                     tela.Centralizar("Opção inválida! Acione uma tecla.",

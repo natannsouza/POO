@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,39 +8,37 @@ namespace Biblioteca
 {
     internal class AlunoController
     {
-        // Atributos
+        // atributos
         private List<AlunoModel> _colecaoAlunos;
-
-        private AlunoModel _aluno;
-        private AlunoView _alunoView;
-
         private int _posicao;
-        private int _colIni;
-        private int _linFin;
+        // associação com a classe Emprestimo (para verificar antes de excluir)
+        private EmprestimoController _emprestimoController;
 
 
-        // Construtor
+        // construtor
         public AlunoController()
         {
-            this._alunoView = new AlunoView();
-            this._aluno = new AlunoModel();
-
             this._colecaoAlunos = new List<AlunoModel>();
-
-            // Adicionar um aluno para testar a consulta
+            // adiciona 2 alunos na coleção para testarmos a consulta posteriormente
             this._colecaoAlunos.Add(
-                new AlunoModel(
-                    "123",
-                    "Zé Colmeia",
-                    "zecolmeia@gmail.com",
-                    "99967-8976"
-                )
+                new AlunoModel("123","Zé Colmeia","zecolmeia@gmail.com","99967-8976")
+            );
+            this._colecaoAlunos.Add(
+                new AlunoModel("456","Catatau","catatau@gmail.com","99876-5432")
             );
         }
 
 
-        // Buscar a matrícula e guardar a posição encontrada
-        public bool BuscarCodigo(string matricula)
+        // recebe o controller de empréstimos depois que ele for criado
+        // (não é possível passar pelo construtor, pois o EmprestimoController
+        // também precisa do AlunoController para ser criado)
+        public void AssociarEmprestimos(EmprestimoController emprestimoController)
+        {
+            this._emprestimoController = emprestimoController;
+        }
+
+
+        private bool Buscar(string matricula)
         {
             bool encontrei = false;
 
@@ -58,92 +56,130 @@ namespace Biblioteca
         }
 
 
-        // Executar as operações do cadastro
-        public void ExecutarCrud()
+        // usado pelo EmprestimoController para consultar um aluno
+        // retorna o nome do aluno ou null se a matrícula não foi encontrada
+        public string ConsultarNome(string matricula)
+        {
+            string nome = null;
+
+            if (this.Buscar(matricula))
+            {
+                nome = this._colecaoAlunos[this._posicao].Nome;
+            }
+
+            return nome;
+        }
+
+
+        // relatório: percorre a coleção e mostra uma linha para cada aluno
+        public void Relatorio()
+        {
+            AlunoView view = new AlunoView();
+
+            // desenha o cabeçalho e recebe a linha do primeiro registro
+            int linha = view.MostrarCabecalhoRelatorio("Relatório de Alunos");
+
+            // percorre TODOS os alunos da coleção
+            for (int i = 0; i < this._colecaoAlunos.Count; i++)
+            {
+                view.MostrarLinhaRelatorio(this._colecaoAlunos[i], linha);
+                linha++;
+            }
+
+            view.FinalizarRelatorio();
+        }
+
+
+        public void ExecutarCRUD()
         {
             AlunoView view = new AlunoView();
             AlunoModel aluno = new AlunoModel();
             string resp;
-
-            // Mostrar o formulário
             view.MostrarFormulario();
 
-            // Ler a matrícula
+            // pergunta o código
             view.EntrarDados("PK", aluno);
 
-            // Buscar a matrícula na coleção
-            bool achei = BuscarCodigo(aluno.Matricula);
+            // busca pelo código
+            bool achei = this.Buscar(aluno.Matricula);
 
-            // Se não encontrou, oferecer o cadastro
+            // se o código NÃO FOI encontrado
             if (!achei)
             {
-                resp = view.Perguntar(
-                    "Matricula nao encontrada. Deseja cadastrar (S/N) : "
-                );
+                // informa que NÃO EXISTE e pergunta se deseja cadastrar
+                resp = view.Perguntar("Matrícula não encontrada! Deseja cadastrar (S/N) : ");
 
-                if (resp == "S")
+                // se SIM
+                if (resp.ToLower() == "s")
                 {
-                    // Ler os demais dados
+                    // pergunta demais dados
                     view.EntrarDados("DT", aluno);
 
-                    // Guardar a resposta da confirmação
-                    resp = view.Perguntar(
-                        "Confirma o cadastro (S/N) : "
-                    );
+                    // pergunta se confirma o cadastro
+                    resp = view.Perguntar("Confirma cadastro (S/N) : ");
 
-                    if (resp == "S")
+                    // se SIM
+                    if (resp.ToLower() == "s")
                     {
-                        // CREATE: adicionar o aluno à coleção
+                        // adiciona o novo registro
                         this._colecaoAlunos.Add(aluno);
                     }
                 }
             }
+            // se o codigo FOI encontrado
             else
             {
-                // READ: mostrar os dados do aluno encontrado
-                view.MostrarDados(
-                    this._colecaoAlunos[this._posicao]
-                );
+                // mostra os dados do registro encontrado
+                view.MostrarDados(this._colecaoAlunos[this._posicao]);
 
-                // Perguntar qual operação realizar
-                resp = view.Perguntar(
-                    "Deseja alterar/excluir/voltar (A/E/V) : "
-                );
+                // pergunta se deseja alterar/excluir/voltar
+                resp = view.Perguntar("Deseja alterar/excluir/voltar (A/E/V) : ");
 
-                // Se escolheu alterar
-                if (resp == "A")
+                // se deseja ALTERAR
+                if (resp.ToLower() == "a")
                 {
-                    // Ler os novos dados
+                    // pergunta os novos dados
                     view.EntrarDados("DT", aluno);
 
-                    // Confirmar a alteração
-                    resp = view.Perguntar(
-                        "Confirma a alteracao (S/N) : "
-                    );
+                    // pergunta se confirma alteração
+                    resp = view.Perguntar("Confirma alteração (S/N) : ");
 
-                    if (resp == "S")
+                    // se SIM
+                    if (resp.ToLower() == "s")
                     {
-                        // UPDATE: substituir o aluno da posição encontrada
+                        // atualiza dos dados do registro
                         this._colecaoAlunos[this._posicao] = aluno;
+
+                        // ou...
+                        // this._colecaoAlunos[this._posicao].Nome = aluno.Nome;
+                        // this._colecaoAlunos[this._posicao].Email = aluno.Email;
+                        // this._colecaoAlunos[this._posicao].Telefone = aluno.Telefone;
                     }
                 }
 
-                // Se escolheu excluir
-                else if (resp == "E")
+                // se deseja EXCLUIR
+                else if (resp.ToLower() == "e")
                 {
-                    // Confirmar a exclusão
-                    resp = view.Perguntar(
-                        "Confirma a exclusao (S/N) : "
-                    );
-
-                    if (resp == "S")
+                    // se o aluno possui empréstimos registrados
+                    if (this._emprestimoController.ExisteEmprestimoDoAluno(aluno.Matricula))
                     {
-                        // DELETE: remover o aluno da posição encontrada
-                        this._colecaoAlunos.RemoveAt(this._posicao);
+                        // não permite a exclusão
+                        view.Perguntar("Aluno com empréstimos! Exclusão negada. ENTER : ");
+                    }
+                    // se o aluno NÃO possui empréstimos
+                    else
+                    {
+                        // pergunta se confirma exclusão
+                        resp = view.Perguntar("Confirma exclusão (S/N) : ");
+
+                        // se SIM
+                        if (resp.ToLower() == "s")
+                        {
+                            // exclui o registro
+                            this._colecaoAlunos.RemoveAt(this._posicao);
+                        }
                     }
                 }
-
-                // Se escolheu V, encerrar o método sem alterar a coleção
             }
         }
     }
