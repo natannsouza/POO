@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -127,62 +128,6 @@ namespace Biblioteca
 
             Console.SetCursorPosition(this._colDados, this._linDados + 3);
             Console.Write(aluno.Telefone);
-        }
-
-
-        // ---------- relatório ----------
-        // colunas do relatório (dentro da moldura, entre as colunas 1 e 78):
-        // Matrícula 2 | Nome 13 | Email 39 | Telefone 66
-
-        // desenha a moldura e o cabeçalho das colunas
-        // retorna a linha onde deve ser escrito o primeiro registro
-        public int MostrarCabecalhoRelatorio(string titulo)
-        {
-            this._tela.MontarMoldura(0, 0, 79, 24, titulo);
-
-            Console.SetCursorPosition(2, 2);
-            Console.Write("Matrícula");
-            Console.SetCursorPosition(13, 2);
-            Console.Write("Nome");
-            Console.SetCursorPosition(39, 2);
-            Console.Write("Email");
-            Console.SetCursorPosition(66, 2);
-            Console.Write("Telefone");
-
-            // linha separadora entre o cabeçalho e os dados
-            Console.SetCursorPosition(1, 3);
-            Console.Write(new string('─', 78));
-
-            return 4;
-        }
-
-
-        // mostra os dados de um aluno em uma linha do relatório
-        public void MostrarLinhaRelatorio(AlunoModel aluno, int linha)
-        {
-            string nome = aluno.Nome;
-            string email = aluno.Email;
-
-            // evita que um texto muito longo invada a coluna seguinte
-            if (nome.Length > 25) nome = nome.Substring(0, 25);
-            if (email.Length > 26) email = email.Substring(0, 26);
-
-            Console.SetCursorPosition(2, linha);
-            Console.Write(aluno.Matricula);
-            Console.SetCursorPosition(13, linha);
-            Console.Write(nome);
-            Console.SetCursorPosition(39, linha);
-            Console.Write(email);
-            Console.SetCursorPosition(66, linha);
-            Console.Write(aluno.Telefone);
-        }
-
-
-        // mostra a mensagem de fim do relatório e aguarda o usuário
-        public void FinalizarRelatorio()
-        {
-            this._tela.Centralizar("Fim do relatório. Tecle ENTER.", 1, 78, 23);
-            Console.ReadLine();
         }
 
 

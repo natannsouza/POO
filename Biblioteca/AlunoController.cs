@@ -1,3 +1,4 @@
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,30 +12,16 @@ namespace Biblioteca
         // atributos
         private List<AlunoModel> _colecaoAlunos;
         private int _posicao;
-        // associação com a classe Emprestimo (para verificar antes de excluir)
-        private EmprestimoController _emprestimoController;
 
 
         // construtor
         public AlunoController()
         {
             this._colecaoAlunos = new List<AlunoModel>();
-            // adiciona 2 alunos na coleção para testarmos a consulta posteriormente
+            // adiciona 1 aluno na coleção para testarmos a consulta posteriormente
             this._colecaoAlunos.Add(
                 new AlunoModel("123","Zé Colmeia","zecolmeia@gmail.com","99967-8976")
             );
-            this._colecaoAlunos.Add(
-                new AlunoModel("456","Catatau","catatau@gmail.com","99876-5432")
-            );
-        }
-
-
-        // recebe o controller de empréstimos depois que ele for criado
-        // (não é possível passar pelo construtor, pois o EmprestimoController
-        // também precisa do AlunoController para ser criado)
-        public void AssociarEmprestimos(EmprestimoController emprestimoController)
-        {
-            this._emprestimoController = emprestimoController;
         }
 
 
@@ -53,40 +40,6 @@ namespace Biblioteca
             }
 
             return encontrei;
-        }
-
-
-        // usado pelo EmprestimoController para consultar um aluno
-        // retorna o nome do aluno ou null se a matrícula não foi encontrada
-        public string ConsultarNome(string matricula)
-        {
-            string nome = null;
-
-            if (this.Buscar(matricula))
-            {
-                nome = this._colecaoAlunos[this._posicao].Nome;
-            }
-
-            return nome;
-        }
-
-
-        // relatório: percorre a coleção e mostra uma linha para cada aluno
-        public void Relatorio()
-        {
-            AlunoView view = new AlunoView();
-
-            // desenha o cabeçalho e recebe a linha do primeiro registro
-            int linha = view.MostrarCabecalhoRelatorio("Relatório de Alunos");
-
-            // percorre TODOS os alunos da coleção
-            for (int i = 0; i < this._colecaoAlunos.Count; i++)
-            {
-                view.MostrarLinhaRelatorio(this._colecaoAlunos[i], linha);
-                linha++;
-            }
-
-            view.FinalizarRelatorio();
         }
 
 
@@ -158,26 +111,16 @@ namespace Biblioteca
                 }
 
                 // se deseja EXCLUIR
-                else if (resp.ToLower() == "e")
+                if (resp.ToLower() == "e")
                 {
-                    // se o aluno possui empréstimos registrados
-                    if (this._emprestimoController.ExisteEmprestimoDoAluno(aluno.Matricula))
-                    {
-                        // não permite a exclusão
-                        view.Perguntar("Aluno com empréstimos! Exclusão negada. ENTER : ");
-                    }
-                    // se o aluno NÃO possui empréstimos
-                    else
-                    {
-                        // pergunta se confirma exclusão
-                        resp = view.Perguntar("Confirma exclusão (S/N) : ");
+                    // pergunta se confirma exclusão
+                    resp = view.Perguntar("Confirma exclusão (S/N) : ");
 
-                        // se SIM
-                        if (resp.ToLower() == "s")
-                        {
-                            // exclui o registro
-                            this._colecaoAlunos.RemoveAt(this._posicao);
-                        }
+                    // se SIM
+                    if (resp.ToLower() == "s")
+                    {
+                        // exclui o registro
+                        this._colecaoAlunos.RemoveAt(this._posicao);
                     }
                 }
             }

@@ -12,17 +12,10 @@ namespace Biblioteca
         private List<EmprestimoModel> _colecaoEmprestimos;
         private int _posicao;
 
-        // associações com as outras classes (para consultar livros e alunos)
-        private LivroController _livroController;
-        private AlunoController _alunoController;
-
 
         // construtor
-        public EmprestimoController(LivroController livroController, AlunoController alunoController)
+        public EmprestimoController()
         {
-            this._livroController = livroController;
-            this._alunoController = alunoController;
-
             this._colecaoEmprestimos = new List<EmprestimoModel>();
 
             // adiciona 2 empréstimos na coleção para testarmos a consulta posteriormente
@@ -37,12 +30,6 @@ namespace Biblioteca
                 new EmprestimoModel(2, "123", "123",
                     DateTime.Today.AddDays(-20), DateTime.Today.AddDays(-5),
                     DateTime.Today.AddDays(-7), "E")
-            );
-            // empréstimo 3: ATIVO e ATRASADO (a devolução prevista já passou)
-            this._colecaoEmprestimos.Add(
-                new EmprestimoModel(3, "456", "456",
-                    DateTime.Today.AddDays(-18), DateTime.Today.AddDays(-3),
-                    DateTime.MinValue, "A")
             );
         }
 
@@ -65,122 +52,11 @@ namespace Biblioteca
         }
 
 
-        // usado pelo LivroController para impedir a exclusão de um livro
-        // que possua empréstimos (ativos ou encerrados)
-        public bool ExisteEmprestimoDoLivro(string isbn)
-        {
-            bool existe = false;
-
-            for (int i = 0; i < this._colecaoEmprestimos.Count; i++)
-            {
-                if (this._colecaoEmprestimos[i].Isbn == isbn)
-                {
-                    existe = true;
-                    break;
-                }
-            }
-
-            return existe;
-        }
-
-
-        // usado pelo AlunoController para impedir a exclusão de um aluno
-        // que possua empréstimos (ativos ou encerrados)
-        public bool ExisteEmprestimoDoAluno(string matricula)
-        {
-            bool existe = false;
-
-            for (int i = 0; i < this._colecaoEmprestimos.Count; i++)
-            {
-                if (this._colecaoEmprestimos[i].Matricula == matricula)
-                {
-                    existe = true;
-                    break;
-                }
-            }
-
-            return existe;
-        }
-
-
-        // usado no cadastro de um novo empréstimo para impedir que um livro
-        // que já está emprestado (empréstimo ATIVO) seja emprestado novamente
-        private bool ExisteEmprestimoAtivoDoLivro(string isbn)
-        {
-            bool existe = false;
-
-            for (int i = 0; i < this._colecaoEmprestimos.Count; i++)
-            {
-                if (this._colecaoEmprestimos[i].Isbn == isbn &&
-                    this._colecaoEmprestimos[i].Situacao == "A")
-                {
-                    existe = true;
-                    break;
-                }
-            }
-
-            return existe;
-        }
-
-
-        // relatório: percorre a coleção e mostra somente os empréstimos ATIVOS
-        public void RelatorioAtivos()
-        {
-            EmprestimoView view = new EmprestimoView();
-            string titulo;
-
-            // desenha o cabeçalho e recebe a linha do primeiro registro
-            int linha = view.MostrarCabecalhoRelatorio("Relatório de Empréstimos Ativos");
-
-            // percorre TODOS os empréstimos da coleção...
-            for (int i = 0; i < this._colecaoEmprestimos.Count; i++)
-            {
-                // ...mas mostra somente os ATIVOS
-                if (this._colecaoEmprestimos[i].Situacao == "A")
-                {
-                    titulo = this._livroController.ConsultarTitulo(this._colecaoEmprestimos[i].Isbn);
-                    view.MostrarLinhaRelatorio(this._colecaoEmprestimos[i], titulo, linha);
-                    linha++;
-                }
-            }
-
-            view.FinalizarRelatorio();
-        }
-
-
-        // relatório: percorre a coleção e mostra somente os empréstimos ATRASADOS
-        // (ativos e com a data de devolução prevista anterior à data de hoje)
-        public void RelatorioAtrasados()
-        {
-            EmprestimoView view = new EmprestimoView();
-            string titulo;
-
-            // desenha o cabeçalho e recebe a linha do primeiro registro
-            int linha = view.MostrarCabecalhoRelatorio("Relatório de Empréstimos Atrasados");
-
-            // percorre TODOS os empréstimos da coleção...
-            for (int i = 0; i < this._colecaoEmprestimos.Count; i++)
-            {
-                // ...mas mostra somente os ATIVOS cuja devolução prevista já passou
-                if (this._colecaoEmprestimos[i].Situacao == "A" &&
-                    this._colecaoEmprestimos[i].DataDevolucaoPrevista < DateTime.Today)
-                {
-                    titulo = this._livroController.ConsultarTitulo(this._colecaoEmprestimos[i].Isbn);
-                    view.MostrarLinhaRelatorio(this._colecaoEmprestimos[i], titulo, linha);
-                    linha++;
-                }
-            }
-
-            view.FinalizarRelatorio();
-        }
-
-
         public void ExecutarCRUD()
         {
             EmprestimoView view = new EmprestimoView();
             EmprestimoModel emprestimo = new EmprestimoModel();
             string resp;
-            string titulo, nome;
             view.MostrarFormulario();
 
             // pergunta o código
@@ -198,72 +74,26 @@ namespace Biblioteca
                 // se SIM
                 if (resp.ToLower() == "s")
                 {
-                    // pergunta o ISBN e consulta o livro
-                    view.EntrarDados("ISBN", emprestimo);
-                    titulo = this._livroController.ConsultarTitulo(emprestimo.Isbn);
+                    // pergunta demais dados
+                    // (datas e situação são preenchidas automaticamente)
+                    view.EntrarDados("DT", emprestimo);
 
-                    // se o livro NÃO FOI encontrado
-                    if (titulo == null)
+                    // pergunta se confirma o cadastro
+                    resp = view.Perguntar("Confirma cadastro (S/N) : ");
+
+                    // se SIM
+                    if (resp.ToLower() == "s")
                     {
-                        view.Perguntar("ISBN não encontrado! Cadastro cancelado. ENTER : ");
-                    }
-                    // se o livro FOI encontrado
-                    else
-                    {
-                        // mostra o título do livro
-                        view.MostrarTitulo(titulo);
-
-                        // se o livro JÁ ESTÁ EMPRESTADO (possui empréstimo ativo)
-                        if (this.ExisteEmprestimoAtivoDoLivro(emprestimo.Isbn))
-                        {
-                            // não permite um novo empréstimo
-                            view.Perguntar("Livro já emprestado! Cadastro cancelado. ENTER : ");
-                        }
-                        // se o livro está DISPONÍVEL
-                        else
-                        {
-                            // pergunta a matrícula e consulta o aluno
-                            view.EntrarDados("MATRICULA", emprestimo);
-                            nome = this._alunoController.ConsultarNome(emprestimo.Matricula);
-
-                            // se o aluno NÃO FOI encontrado
-                            if (nome == null)
-                            {
-                                view.Perguntar("Matrícula não encontrada! Cadastro cancelado. ENTER : ");
-                            }
-                            // se o aluno FOI encontrado
-                            else
-                            {
-                                // mostra o nome do aluno
-                                view.MostrarNome(nome);
-
-                                // preenche demais dados
-                                // (datas e situação são preenchidas automaticamente)
-                                view.EntrarDados("DT", emprestimo);
-
-                                // pergunta se confirma o cadastro
-                                resp = view.Perguntar("Confirma cadastro (S/N) : ");
-
-                                // se SIM
-                                if (resp.ToLower() == "s")
-                                {
-                                    // adiciona o novo registro
-                                    this._colecaoEmprestimos.Add(emprestimo);
-                                }
-                            }
-                        }
+                        // adiciona o novo registro
+                        this._colecaoEmprestimos.Add(emprestimo);
                     }
                 }
             }
             // se o codigo FOI encontrado
             else
             {
-                // consulta o título do livro e o nome do aluno deste empréstimo
-                titulo = this._livroController.ConsultarTitulo(this._colecaoEmprestimos[this._posicao].Isbn);
-                nome = this._alunoController.ConsultarNome(this._colecaoEmprestimos[this._posicao].Matricula);
-
                 // mostra os dados do registro encontrado
-                view.MostrarDados(this._colecaoEmprestimos[this._posicao], titulo, nome);
+                view.MostrarDados(this._colecaoEmprestimos[this._posicao]);
 
                 // se o empréstimo está ATIVO
                 if (this._colecaoEmprestimos[this._posicao].Situacao == "A")
@@ -280,7 +110,7 @@ namespace Biblioteca
                         this._colecaoEmprestimos[this._posicao].Situacao = "E";
 
                         // mostra os dados atualizados
-                        view.MostrarDados(this._colecaoEmprestimos[this._posicao], titulo, nome);
+                        view.MostrarDados(this._colecaoEmprestimos[this._posicao]);
                         view.Perguntar("Devolução registrada! Tecle ENTER : ");
                     }
                 }

@@ -11,30 +11,16 @@ namespace Biblioteca
         // atributos
         private List<LivroModel> _colecaoLivros;
         private int _posicao;
-        // associação com a classe Emprestimo (para verificar antes de excluir)
-        private EmprestimoController _emprestimoController;
 
 
         // construtor
         public LivroController()
         {
             this._colecaoLivros = new List<LivroModel>();
-            // adiciona 2 livros na coleção para testarmos a consulta posteriormente
+            // adiciona 1 livro na coleção para testarmos a consulta posteriormente
             this._colecaoLivros.Add(
                 new LivroModel("123", "Faca", "Jo Nesbo", "Policial", 450)
             );
-            this._colecaoLivros.Add(
-                new LivroModel("456", "Dom Casmurro", "Machado de Assis", "Romance", 256)
-            );
-        }
-
-
-        // recebe o controller de empréstimos depois que ele for criado
-        // (não é possível passar pelo construtor, pois o EmprestimoController
-        // também precisa do LivroController para ser criado)
-        public void AssociarEmprestimos(EmprestimoController emprestimoController)
-        {
-            this._emprestimoController = emprestimoController;
         }
 
 
@@ -53,40 +39,6 @@ namespace Biblioteca
             }
 
             return encontrei;
-        }
-
-
-        // usado pelo EmprestimoController para consultar um livro
-        // retorna o título do livro ou null se o ISBN não foi encontrado
-        public string ConsultarTitulo(string isbn)
-        {
-            string titulo = null;
-
-            if (this.Buscar(isbn))
-            {
-                titulo = this._colecaoLivros[this._posicao].Titulo;
-            }
-
-            return titulo;
-        }
-
-
-        // relatório: percorre a coleção e mostra uma linha para cada livro
-        public void Relatorio()
-        {
-            LivroView view = new LivroView();
-
-            // desenha o cabeçalho e recebe a linha do primeiro registro
-            int linha = view.MostrarCabecalhoRelatorio("Relatório de Livros");
-
-            // percorre TODOS os livros da coleção
-            for (int i = 0; i < this._colecaoLivros.Count; i++)
-            {
-                view.MostrarLinhaRelatorio(this._colecaoLivros[i], linha);
-                linha++;
-            }
-
-            view.FinalizarRelatorio();
         }
 
 
@@ -159,26 +111,16 @@ namespace Biblioteca
                 }
 
                 // se deseja EXCLUIR
-                else if (resp.ToLower() == "e")
+                if (resp.ToLower() == "e")
                 {
-                    // se o livro possui empréstimos registrados
-                    if (this._emprestimoController.ExisteEmprestimoDoLivro(livro.Isbn))
-                    {
-                        // não permite a exclusão
-                        view.Perguntar("Livro com empréstimos! Exclusão negada. ENTER : ");
-                    }
-                    // se o livro NÃO possui empréstimos
-                    else
-                    {
-                        // pergunta se confirma exclusão
-                        resp = view.Perguntar("Confirma exclusão (S/N) : ");
+                    // pergunta se confirma exclusão
+                    resp = view.Perguntar("Confirma exclusão (S/N) : ");
 
-                        // se SIM
-                        if (resp.ToLower() == "s")
-                        {
-                            // exclui o registro
-                            this._colecaoLivros.RemoveAt(this._posicao);
-                        }
+                    // se SIM
+                    if (resp.ToLower() == "s")
+                    {
+                        // exclui o registro
+                        this._colecaoLivros.RemoveAt(this._posicao);
                     }
                 }
             }
