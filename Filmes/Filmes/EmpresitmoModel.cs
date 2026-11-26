@@ -80,6 +80,7 @@ namespace Filmes
             Numero = 0;
             Isbn = "";
             Matricula = "";
+            //MinValue indica nao devolvido
             DataEmprestimo = DateTime.MinValue;
             DataDevolucaoPrevista = DateTime.MinValue;
             DataDevolucaoEfetiva = DateTime.MinValue;
